@@ -114,4 +114,35 @@ final class RichStringOutputTests: XCTestCase {
 
         XCTAssertEqual(output, expected)
     }
+
+    func testComposedModifierOutput() {
+        struct ForegroundAndBackground: RichStringModifier {
+            let foreground: Color
+            let background: Color
+            func body(_ content: Content) -> some RichString {
+                content
+                    .foregroundColor(foreground)
+                    .backgroundColor(background)
+            }
+        }
+
+        let fixture = Fixture {
+            "Test".modifier(
+                ForegroundAndBackground(
+                    foreground: .white,
+                    background: .blue
+                )
+            )
+        }
+
+        let output = fixture._makeOutput()
+        let expected: RichStringOutput = .init(
+            .modified(
+                .modified(.string("Test"), .foregroundColor(.white)),
+                .backgroundColor(.blue)
+            )
+        )
+
+        XCTAssertEqual(output, expected)
+    }
 }

@@ -48,6 +48,14 @@ extension String {
 
 extension ModifiedContent where Self: RichString {
     public func _makeOutput() -> RichStringOutput {
+        if Modifier.Body.self == Never.self {
+            return primitiveModifierOutput()
+        } else {
+            return composedModifierOutput()
+        }
+    }
+
+    private func primitiveModifierOutput() -> RichStringOutput {
         guard
             case .content(let lhs) = content._makeOutput().storage,
             case .modifier(let rhs) = modifier._makeOutput().storage
@@ -56,6 +64,13 @@ extension ModifiedContent where Self: RichString {
         }
 
         return .init(.modified(lhs, rhs))
+    }
+
+    private func composedModifierOutput() -> RichStringOutput {
+        let wrappedContent = Modifier.Content(content)
+        let modifiedContent = modifier.body(wrappedContent)
+        let output = modifiedContent._makeOutput()
+        return output
     }
 }
 
@@ -73,11 +88,20 @@ extension Concatenation {
     }
 }
 
+extension _RichStringModifier_Content {
+    public func _makeOutput() -> RichStringOutput {
+        switch storage {
+        case .modifier(let mod): return mod._makeOutput()
+        case .content(let con):  return con._makeOutput()
+        }
+    }
+}
+
 // MARK: RichStringModifier Default
 
 extension RichStringModifier {
     public func _makeOutput() -> RichStringOutput {
-        body(.init())._makeOutput()
+        body(.init(self))._makeOutput()
     }
 }
 

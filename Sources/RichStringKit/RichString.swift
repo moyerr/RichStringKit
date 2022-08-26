@@ -8,7 +8,7 @@ public protocol RichString {
 public extension RichString where Body == Never {
     var body: Body {
         // Trap
-        preconditionFailure("Body of primitive type \(String(describing: Self.self)) should not be accessed")
+        preconditionFailure("Body of primitive content \(String(describing: Self.self)) should not be accessed")
     }
 }
 

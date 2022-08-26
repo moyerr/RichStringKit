@@ -9,7 +9,7 @@ public protocol RichStringModifier {
 extension RichStringModifier where Body == Never {
     public func body(_ content: Self.Content) -> Body {
         // Trap
-        preconditionFailure("\(#function) method of primitive type \(String(describing: Self.self)) should not be called")
+        preconditionFailure("\(#function) method of primitive modifier \(String(describing: Self.self)) should not be called")
     }
 }
 
@@ -23,4 +23,14 @@ public extension RichStringModifier {
 
 public struct _RichStringModifier_Content<Modifier>: RichString where Modifier: RichStringModifier {
     public typealias Body = Never
+
+    enum Storage {
+        case modifier(Modifier)
+        case content(any RichString)
+    }
+
+    let storage: Storage
+
+    init(_ modifier: Modifier) { self.storage = .modifier(modifier) }
+    init(_ content: some RichString) { self.storage = .content(content) }
 }
