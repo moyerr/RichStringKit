@@ -10,5 +10,4 @@ public struct ModifiedContent<Content, Modifier> {
 }
 
 extension ModifiedContent: RichString where Content: RichString, Modifier: RichStringModifier {}
-
 extension ModifiedContent: RichStringModifier where Content: RichStringModifier, Modifier: RichStringModifier {}

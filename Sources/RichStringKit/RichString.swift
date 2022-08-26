@@ -1,6 +1,15 @@
 public protocol RichString {
-    associatedtype Body
+    associatedtype Body: RichString
+
+    func _makeOutput() -> RichStringOutput
     @RichStringBuilder var body: Body { get }
+}
+
+public extension RichString where Body == Never {
+    var body: Body {
+        // Trap
+        preconditionFailure("Body of primitive type \(String(describing: Self.self)) should not be accessed")
+    }
 }
 
 public extension RichString {
@@ -8,3 +17,4 @@ public extension RichString {
         .init(content: self, modifier: modifier)
     }
 }
+

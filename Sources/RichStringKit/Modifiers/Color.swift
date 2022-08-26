@@ -6,27 +6,23 @@ import UIKit
 typealias Color = UIColor
 #endif
 
-struct ForegroundColor: RichStringModifier {
+public struct ForegroundColor: RichStringModifier {
+    public typealias Body = Never
+    
     let color: Color
 
     init(_ color: Color) {
         self.color = color
-    }
-
-    func modify(_ content: Content) -> some RichString {
-        return ModifiedContent(content: content, modifier: self)
     }
 }
 
-struct BackgroundColor: RichStringModifier {
+public struct BackgroundColor: RichStringModifier {
+    public typealias Body = Never
+
     let color: Color
 
     init(_ color: Color) {
         self.color = color
-    }
-
-    func modify(_ content: Content) -> some RichString {
-        return ModifiedContent(content: content, modifier: self)
     }
 }
 
@@ -37,7 +33,7 @@ public extension RichString {
     }
 
     func backgroundColor(_ color: NSColor) -> some RichString {
-        modifier(ForegroundColor(color))
+        modifier(BackgroundColor(color))
     }
     #else
     func foregroundColor(_ color: UIColor) -> some RichString {
@@ -45,7 +41,7 @@ public extension RichString {
     }
 
     func backgroundColor(_ color: UIColor) -> some RichString {
-        modifier(ForegroundColor(color))
+        modifier(BackgroundColor(color))
     }
     #endif
 }

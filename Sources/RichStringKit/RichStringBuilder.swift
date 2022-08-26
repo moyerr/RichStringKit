@@ -1,6 +1,6 @@
 @resultBuilder
-public struct RichStringBuilder {
-    public static func buildBlock() -> EmptyString {
+public enum RichStringBuilder {
+    public static func buildBlock() -> some RichString {
         EmptyString()
     }
 
@@ -13,16 +13,25 @@ public struct RichStringBuilder {
     @_disfavoredOverload
     public static func buildBlock(
         _ components: any RichString...
-    ) -> Concatenate {
-        Concatenate(components)
+    ) -> Concatenation {
+        Concatenation(components)
     }
 
-    // MARK: Internal
+    public static func buildEither<Content>(
+        first content: Content
+    ) -> Content where Content: RichString {
+        content
+    }
 
-    static func buildBlock<Content>(
+    public static func buildEither<Content>(
+        second content: Content
+    ) -> Content where Content: RichString {
+        content
+    }
+
+    public static func buildLimitedAvailability<Content>(
         _ content: Content
-    ) -> Never where Content: RichString, Content.Body == Never {
-        content.body
+    ) -> Content where Content: RichString {
+        content
     }
-
 }
