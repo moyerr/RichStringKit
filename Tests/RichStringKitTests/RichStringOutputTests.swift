@@ -10,6 +10,16 @@ final class RichStringOutputTests: XCTestCase {
         }
     }
 
+    struct ForegroundAndBackground: RichStringModifier {
+        let foreground: Color
+        let background: Color
+        func body(_ content: Content) -> some RichString {
+            content
+                .foregroundColor(foreground)
+                .backgroundColor(background)
+        }
+    }
+
     func testEmptyOutput() {
         let fixture = Fixture {}
         let output = fixture._makeOutput()
@@ -116,16 +126,6 @@ final class RichStringOutputTests: XCTestCase {
     }
 
     func testComposedModifierOutput() {
-        struct ForegroundAndBackground: RichStringModifier {
-            let foreground: Color
-            let background: Color
-            func body(_ content: Content) -> some RichString {
-                content
-                    .foregroundColor(foreground)
-                    .backgroundColor(background)
-            }
-        }
-
         let fixture = Fixture {
             "Test".modifier(
                 ForegroundAndBackground(
@@ -145,4 +145,31 @@ final class RichStringOutputTests: XCTestCase {
 
         XCTAssertEqual(output, expected)
     }
+
+    func testConcatenatedModifierOutput() {
+        let combined = BaselineOffset(8)
+            .concat(ForegroundAndBackground(
+                foreground: .white,
+                background: .blue)
+            )
+
+        let fixture = Fixture {
+            "Test"
+                .modifier(combined)
+        }
+
+        let output = fixture._makeOutput()
+        let expected: RichStringOutput = .init(
+            .modified(
+                .string("Test"),
+                .combined(
+                    .baselineOffset(8),
+                    .combined(.foregroundColor(.white), .backgroundColor(.blue))
+                )
+            )
+        )
+
+        XCTAssertEqual(output, expected)
+    }
+
 }

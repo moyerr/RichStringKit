@@ -6,7 +6,7 @@ final class RichStringBuilderTests: XCTestCase {
         @RichStringBuilder var content: () -> Content
     }
 
-    func testEmptyClosure() {
+    func testEmpty() {
         let content = Fixture(content: {}).content()
 
         let actualType = type(of: content)
