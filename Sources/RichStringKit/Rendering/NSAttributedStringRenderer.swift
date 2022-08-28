@@ -1,17 +1,54 @@
+#if os(macOS)
+import AppKit
+#else
+import UIKit
+#endif
+
 import Foundation
 
-private typealias Attribute = (NSAttributedString.Key, Any)
+private typealias Attributes = [NSAttributedString.Key: Any]
+
+private extension NSUnderlineStyle {
+    init(_ style: LineStyle) {
+        switch style {
+        case .single:               self = .single
+        case .thick:                self = .thick
+        case .double:               self = .double
+        case .patternDot:           self = .patternDot
+        case .patternDash:          self = .patternDash
+        case .patternDashDot:       self = .patternDashDot
+        case .patternDashDotDot:    self = .patternDashDotDot
+        case .byWord:               self = .byWord
+        }
+    }
+}
+
 private extension RichStringOutput.Modifier {
-    func makeAttributes() -> [Attribute] {
+    func makeAttributes() -> Attributes {
         switch self {
         case .backgroundColor(let color):
-            return [(.backgroundColor, color)]
+            return [.backgroundColor: color]
         case .baselineOffset(let offset):
-            return [(.baselineOffset, CGFloat(offset))]
+            return [.baselineOffset: CGFloat(offset)]
+        case .font(let font):
+            return [.font: font]
         case .foregroundColor(let color):
-            return [(.foregroundColor, color)]
+            return [.foregroundColor: color]
+        case .kern(let value):
+            return [.kern: NSNumber(value: value)]
+        case .link(let url):
+            return [.link: url]
+        case .strikethroughStyle(let style):
+            return [.strikethroughStyle: NSUnderlineStyle(style).rawValue]
+        case .underlineColor(let color):
+            return [.underlineColor: color]
+        case .underlineStyle(let style):
+            return [.underlineStyle: NSUnderlineStyle(style).rawValue]
         case .combined(let modifier1, let modifier2):
-            return modifier1.makeAttributes() + modifier2.makeAttributes()
+            return modifier1.makeAttributes()
+                .merging(modifier2.makeAttributes()) { current, new in
+                    new
+                }
         }
     }
 }
@@ -20,7 +57,7 @@ struct NSAttributedStringRenderer: RichStringRenderer {
     private struct RichStringReduction {
         struct AttributeMapping {
             let range: Range<String.Index>
-            let attributes: [Attribute]
+            let attributes: Attributes
         }
 
         var string: String = ""

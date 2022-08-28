@@ -1,8 +1,16 @@
+import Foundation
+
 public struct RichStringOutput: Equatable {
     enum Modifier: Equatable {
         case backgroundColor(Color)
         case baselineOffset(Double)
+        case font(Font)
         case foregroundColor(Color)
+        case kern(Double)
+        case link(URL)
+        case strikethroughStyle(LineStyle)
+        case underlineColor(Color)
+        case underlineStyle(LineStyle)
         indirect case combined(Modifier, Modifier)
     }
 
@@ -107,24 +115,6 @@ extension RichStringModifier {
 }
 
 // MARK: RichStringModifier Primitives
-
-extension ForegroundColor {
-    public func _makeOutput() -> RichStringOutput {
-        .init(.foregroundColor(color))
-    }
-}
-
-extension BackgroundColor {
-    public func _makeOutput() -> RichStringOutput {
-        .init(.backgroundColor(color))
-    }
-}
-
-extension BaselineOffset {
-    public func _makeOutput() -> RichStringOutput {
-        .init(.baselineOffset(offset))
-    }
-}
 
 extension ModifiedContent where Self: RichStringModifier {
     public func _makeOutput() -> RichStringOutput {
