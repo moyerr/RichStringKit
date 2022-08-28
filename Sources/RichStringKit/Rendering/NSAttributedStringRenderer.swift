@@ -55,13 +55,13 @@ private extension RichStringOutput.Modifier {
 
 struct NSAttributedStringRenderer: RichStringRenderer {
     private struct RichStringReduction {
-        struct AttributeMapping {
+        struct AttributeMap {
             let range: Range<String.Index>
             let attributes: Attributes
         }
 
         var string: String = ""
-        var attributeMapping: [AttributeMapping] = []
+        var attributeMaps: [AttributeMap] = []
     }
 
     func render(_ component: some RichString) -> NSAttributedString {
@@ -76,13 +76,11 @@ struct NSAttributedStringRenderer: RichStringRenderer {
 
         let string = NSMutableAttributedString(string: reduction.string)
 
-        for mapping in reduction.attributeMapping {
-            let attributes = mapping.attributes
-                .reduce(into: [NSAttributedString.Key: Any]()) { partialResult, attribute in
-                    partialResult[attribute.0] = attribute.1
-                }
-
-            string.addAttributes(attributes, range: NSRange(mapping.range, in: reduction.string))
+        for mapping in reduction.attributeMaps {
+            string.addAttributes(
+                mapping.attributes,
+                range: NSRange(mapping.range, in: reduction.string)
+            )
         }
 
         return string
@@ -120,7 +118,7 @@ struct NSAttributedStringRenderer: RichStringRenderer {
 
         switch content {
         case .modified(let content, let modifier):
-            reduction.attributeMapping.append(.init(
+            reduction.attributeMaps.append(.init(
                 range: substring.rangeOfIndices,
                 attributes: modifier.makeAttributes())
             )
@@ -142,3 +140,15 @@ public extension RichString {
     }
 }
 
+public extension NSAttributedString {
+    convenience init(@RichStringBuilder _ content: () -> some RichString) {
+        let attributed = content().renderNSAttributedString()
+        self.init(attributedString: attributed)
+    }
+
+    static func richString(
+        @RichStringBuilder _ content: () -> some RichString
+    ) -> NSAttributedString {
+        content().renderNSAttributedString()
+    }
+}
