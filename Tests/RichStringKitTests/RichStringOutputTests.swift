@@ -172,4 +172,69 @@ final class RichStringOutputTests: XCTestCase {
         XCTAssertEqual(output, expected)
     }
 
+    func testFormattedContent() {
+        let fixture = Fixture {
+            Formatted("Hello, %@!") {
+                "Swift"
+                    .font(.systemFont(ofSize: 20, weight: .bold))
+                    .backgroundColor(.orange)
+                    .foregroundColor(.white)
+            }
+            .font(.systemFont(ofSize: 20))
+        }
+
+        let output = fixture._makeOutput()
+        let expected: RichStringOutput = .init(
+            .modified(
+                .sequence([
+                    .string("Hello, "),
+                    .modified(
+                        .modified(
+                            .modified(
+                                .string("Swift"),
+                                .font(.systemFont(ofSize: 20, weight: .bold))
+                            ),
+                            .backgroundColor(.orange)
+                        ),
+                        .foregroundColor(.white)
+                    ),
+                    .string("!")
+                ]),
+                .font(.systemFont(ofSize: 20))
+            )
+        )
+
+        XCTAssertEqual(output, expected)
+    }
+
+    func testReduceContent() {
+        let fixture = Fixture {
+            "Welcome"
+                .foregroundColor(.blue)
+
+            " to the "
+                .kern(8)
+
+            "Jungle"
+                .backgroundColor(.red)
+
+            "!!"
+        }
+
+        let output = fixture._makeOutput()
+
+        guard case .content(let content) = output.storage else {
+            return XCTFail()
+        }
+
+        let string = content.reduce(into: "") { result, nextContent in
+            guard case .string(let str) = nextContent else {
+                return
+            }
+
+            result += str
+        }
+
+        XCTAssertEqual(string, "Welcome to the Jungle!!")
+    }
 }
