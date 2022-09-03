@@ -5,8 +5,8 @@ public protocol RichString {
     @RichStringBuilder var body: Body { get }
 }
 
-public extension RichString where Body == Never {
-    var body: Body {
+extension RichString where Body == Never {
+    public var body: Body {
         // Trap
         preconditionFailure("Body of primitive content \(String(describing: Self.self)) should not be accessed")
     }
