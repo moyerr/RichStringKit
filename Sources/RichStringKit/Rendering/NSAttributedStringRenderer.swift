@@ -34,6 +34,8 @@ private extension RichStringOutput.Modifier {
             return [.font: font]
         case .foregroundColor(let color):
             return [.foregroundColor: color]
+        case .empty:
+            return [:]
         case .kern(let value):
             return [.kern: NSNumber(value: value)]
         case .link(let url):

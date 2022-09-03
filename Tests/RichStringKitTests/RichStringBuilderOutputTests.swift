@@ -7,7 +7,7 @@ final class RichStringBuilderOutputTests: XCTestCase {
 
     func testEmptyStringOutput() {
         let output = EmptyString()._makeOutput()
-        let expected = RichStringOutput(.empty)
+        let expected = RichStringOutput(RichStringOutput.Content.empty)
 
         XCTAssertEqual(output, expected)
     }
@@ -97,6 +97,13 @@ final class RichStringBuilderOutputTests: XCTestCase {
         XCTAssertEqual(output, expected)
     }
 
+    func testEmptyModifierOutput() {
+        let output = EmptyModifier()._makeOutput()
+        let expected = RichStringOutput(RichStringOutput.Modifier.empty)
+
+        XCTAssertEqual(output, expected)
+    }
+
     func testKernOutput() {
         let output = Kern(8)._makeOutput()
         let expected = RichStringOutput(.kern(8))
@@ -165,6 +172,22 @@ final class RichStringBuilderOutputTests: XCTestCase {
                 .foregroundColor(.white),
                 .backgroundColor(.black)
             )
+        )
+
+        XCTAssertEqual(output, expected)
+    }
+
+    func testEmptyCustomModifierOutput() {
+        struct Fixture: RichStringModifier {
+            func body(_ content: Content) -> some RichString {
+                content
+                // Pass content with no modifier
+            }
+        }
+
+        let output = Fixture()._makeOutput()
+        let expected = RichStringOutput(
+            RichStringOutput.Modifier.empty
         )
 
         XCTAssertEqual(output, expected)

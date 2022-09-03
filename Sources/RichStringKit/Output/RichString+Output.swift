@@ -11,7 +11,9 @@ extension RichString {
 // MARK: EmptyString
 
 extension EmptyString {
-    public func _makeOutput() -> RichStringOutput { .init(.empty) }
+    public func _makeOutput() -> RichStringOutput {
+        .init(RichStringOutput.Content.empty)
+    }
 }
 
 // MARK: String

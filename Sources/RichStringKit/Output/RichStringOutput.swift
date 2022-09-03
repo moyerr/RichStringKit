@@ -4,6 +4,7 @@ public struct RichStringOutput: Equatable {
     enum Modifier: Equatable {
         case backgroundColor(Color)
         case baselineOffset(Double)
+        case empty
         case font(Font)
         case foregroundColor(Color)
         case kern(Double)

@@ -10,7 +10,8 @@ extension RichStringModifier {
             case .content(let modifiedContent) = output.storage,
             case .modified(let content, let modifier) = modifiedContent
         else {
-            preconditionFailure("we done fucked up: \(output)")
+            // If the output is not modified content, then this must be the empty modifier
+            return EmptyModifier()._makeOutput()
         }
 
         func combineModifiers(
@@ -32,6 +33,14 @@ extension RichStringModifier {
 }
 
 // MARK: - RichStringModifier Primitives
+
+// MARK: EmptyModifier
+
+extension EmptyModifier {
+    public func _makeOutput() -> RichStringOutput {
+        .init(RichStringOutput.Modifier.empty)
+    }
+}
 
 // MARK: ModifiedContent
 
