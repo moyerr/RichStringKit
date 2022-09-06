@@ -138,9 +138,6 @@ extension Formatted {
 
 extension _RichStringModifier_Content {
     public func _makeOutput() -> RichStringOutput {
-        switch storage {
-        case .modifier(let mod): return mod._makeOutput()
-        case .content(let con):  return con._makeOutput()
-        }
+        return content._makeOutput()
     }
 }

@@ -24,13 +24,7 @@ public extension RichStringModifier {
 public struct _RichStringModifier_Content<Modifier>: RichString where Modifier: RichStringModifier {
     public typealias Body = Never
 
-    enum Storage {
-        case modifier(Modifier)
-        case content(any RichString)
-    }
+    let content: any RichString
 
-    let storage: Storage
-
-    init(_ modifier: Modifier) { self.storage = .modifier(modifier) }
-    init(_ content: some RichString) { self.storage = .content(content) }
+    init(_ content: some RichString) { self.content = content }
 }
