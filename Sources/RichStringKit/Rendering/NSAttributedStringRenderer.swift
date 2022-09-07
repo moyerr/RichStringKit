@@ -66,91 +66,67 @@ struct NSAttributedStringRenderer: RichStringRenderer {
         var attributeMaps: [AttributeMap] = []
     }
 
-    func render(_ component: some RichString) -> NSAttributedString {
+    static func render(_ component: some RichString) -> NSAttributedString {
         let output = component._makeOutput()
 
         guard case .content(let content) = output.storage else {
             return NSAttributedString()
         }
 
-        var reduction = RichStringReduction()
-        reduce(content, into: &reduction)
+        let reduction = content.reduce(into: RichStringReduction()) { result, subContent in
+            let nextPart = subContent
+                .reduce(into: "") { currentString, subContent in
+                    guard case .string(let str) = subContent else { return }
+                    currentString += str
+                }
 
-        let string = NSMutableAttributedString(string: reduction.string)
+            let currentEndIndex = result.string.endIndex
+            let updatedString = result.string + nextPart
+
+            switch subContent {
+            case .modified(_, let modifier):
+                let updatedEndIndex = updatedString.endIndex
+
+                result.attributeMaps.append(.init(
+                    range: currentEndIndex ..< updatedEndIndex,
+                    attributes: modifier.makeAttributes())
+                )
+            case .string:
+                result.string = updatedString
+            default:
+                break
+            }
+        }
+
+        let attributedString = NSMutableAttributedString(string: reduction.string)
 
         for mapping in reduction.attributeMaps {
-            string.addAttributes(
+            attributedString.addAttributes(
                 mapping.attributes,
                 range: NSRange(mapping.range, in: reduction.string)
             )
         }
 
-        return string
-    }
-
-    @discardableResult
-    private func reduce(
-        _ content: RichStringOutput.Content,
-        into string: inout String
-    ) -> Substring {
-        let currentEndIndex = string.endIndex
-
-        switch content {
-        case .empty:
-            break
-        case .string(let newString):
-            string += newString
-        case .modified(let content, _):
-            reduce(content, into: &string)
-        case .sequence(let contents):
-            for content in contents {
-                reduce(content, into: &string)
-            }
-        }
-
-        return string[currentEndIndex...]
-    }
-
-    private func reduce(
-        _ content: RichStringOutput.Content,
-        into reduction: inout RichStringReduction
-    ) {
-        var currentString = reduction.string
-        let substring = reduce(content, into: &currentString)
-
-        switch content {
-        case .modified(let content, let modifier):
-            reduction.attributeMaps.append(.init(
-                range: substring.rangeOfIndices,
-                attributes: modifier.makeAttributes())
-            )
-
-            reduce(content, into: &reduction)
-        case .sequence(let contents):
-            for nestedContent in contents {
-                reduce(nestedContent, into: &reduction)
-            }
-        default:
-            reduction.string += substring
-        }
+        return attributedString
     }
 }
 
-public extension RichString {
-    func renderNSAttributedString() -> NSAttributedString {
-        NSAttributedStringRenderer().render(self)
+extension RichString {
+    func render<Renderer: RichStringRenderer>(
+        using rendererType: Renderer.Type
+    ) -> Renderer.Result {
+        Renderer.render(self)
     }
 }
 
 public extension NSAttributedString {
     convenience init(@RichStringBuilder _ content: () -> some RichString) {
-        let attributed = content().renderNSAttributedString()
-        self.init(attributedString: attributed)
+        self.init(attributedString: .richString(content))
     }
 
     static func richString(
         @RichStringBuilder _ content: () -> some RichString
     ) -> NSAttributedString {
-        content().renderNSAttributedString()
+        content().render(using: NSAttributedStringRenderer.self)
     }
 }
