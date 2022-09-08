@@ -6,7 +6,58 @@ import UIKit
 
 import Foundation
 
-private typealias Attributes = [NSAttributedString.Key: Any]
+// MARK: - Rendering
+
+enum NSAttributedStringRenderer: RichStringRenderer {
+    fileprivate typealias Attributes = [NSAttributedString.Key: Any]
+
+    private struct RangedAttributes {
+        let range: Range<String.Index>
+        let attributes: Attributes
+    }
+
+    static func render(_ component: some RichString) -> NSAttributedString {
+        guard let modifierMap = ModifierMap(from: component) else {
+            return NSAttributedString()
+        }
+
+        let finalString = modifierMap.string
+        let attributesByRange = modifierMap.rangedModifiers
+            .map {
+                RangedAttributes(
+                    range: $0.range,
+                    attributes: $0.modifier.makeAttributes()
+                )
+            }
+
+        let attributedString = NSMutableAttributedString(string: finalString)
+
+        for rangedAttributes in attributesByRange {
+            attributedString.addAttributes(
+                rangedAttributes.attributes,
+                range: NSRange(rangedAttributes.range, in: finalString)
+            )
+        }
+
+        return attributedString
+    }
+}
+
+// MARK: - Public Interface
+
+public extension NSAttributedString {
+    convenience init(@RichStringBuilder _ content: () -> some RichString) {
+        self.init(attributedString: .richString(content))
+    }
+
+    static func richString(
+        @RichStringBuilder _ content: () -> some RichString
+    ) -> NSAttributedString {
+        content().render(using: NSAttributedStringRenderer.self)
+    }
+}
+
+// MARK: - Type Conversions
 
 private extension NSUnderlineStyle {
     init(_ style: LineStyle) {
@@ -24,7 +75,7 @@ private extension NSUnderlineStyle {
 }
 
 private extension RichStringOutput.Modifier {
-    func makeAttributes() -> Attributes {
+    func makeAttributes() -> NSAttributedStringRenderer.Attributes {
         switch self {
         case .backgroundColor(let color):
             return [.backgroundColor: color]
@@ -52,81 +103,5 @@ private extension RichStringOutput.Modifier {
                     new
                 }
         }
-    }
-}
-
-struct NSAttributedStringRenderer: RichStringRenderer {
-    private struct RichStringReduction {
-        struct AttributeMap {
-            let range: Range<String.Index>
-            let attributes: Attributes
-        }
-
-        var string: String = ""
-        var attributeMaps: [AttributeMap] = []
-    }
-
-    static func render(_ component: some RichString) -> NSAttributedString {
-        let output = component._makeOutput()
-
-        guard case .content(let content) = output.storage else {
-            return NSAttributedString()
-        }
-
-        let reduction = content.reduce(into: RichStringReduction()) { result, subContent in
-            let nextPart = subContent
-                .reduce(into: "") { currentString, subContent in
-                    guard case .string(let str) = subContent else { return }
-                    currentString += str
-                }
-
-            let currentEndIndex = result.string.endIndex
-            let updatedString = result.string + nextPart
-
-            switch subContent {
-            case .modified(_, let modifier):
-                let updatedEndIndex = updatedString.endIndex
-
-                result.attributeMaps.append(.init(
-                    range: currentEndIndex ..< updatedEndIndex,
-                    attributes: modifier.makeAttributes())
-                )
-            case .string:
-                result.string = updatedString
-            default:
-                break
-            }
-        }
-
-        let attributedString = NSMutableAttributedString(string: reduction.string)
-
-        for mapping in reduction.attributeMaps {
-            attributedString.addAttributes(
-                mapping.attributes,
-                range: NSRange(mapping.range, in: reduction.string)
-            )
-        }
-
-        return attributedString
-    }
-}
-
-extension RichString {
-    func render<Renderer: RichStringRenderer>(
-        using rendererType: Renderer.Type
-    ) -> Renderer.Result {
-        Renderer.render(self)
-    }
-}
-
-public extension NSAttributedString {
-    convenience init(@RichStringBuilder _ content: () -> some RichString) {
-        self.init(attributedString: .richString(content))
-    }
-
-    static func richString(
-        @RichStringBuilder _ content: () -> some RichString
-    ) -> NSAttributedString {
-        content().render(using: NSAttributedStringRenderer.self)
     }
 }
