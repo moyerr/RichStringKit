@@ -1,4 +1,4 @@
-public struct Formatted: RichString {
+public struct Format: RichString {
     public typealias Body = Never
 
     let formatString: String
@@ -13,7 +13,7 @@ public struct Formatted: RichString {
     }
 }
 
-extension Formatted {
+extension Format {
     public init(
         _ formatString: String,
         @RichStringBuilder arg0: () -> some RichString

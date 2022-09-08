@@ -31,7 +31,7 @@ final class RichStringBuilderTests: XCTestCase {
         }.content()
 
         let actualType = type(of: content)
-        let expectedType = Concatenation.self
+        let expectedType = Concatenate.self
 
         XCTAssertTrue(actualType == expectedType)
     }

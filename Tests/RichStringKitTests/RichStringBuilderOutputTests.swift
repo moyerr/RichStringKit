@@ -20,7 +20,7 @@ final class RichStringBuilderOutputTests: XCTestCase {
     }
 
     func testConcatenatedOutput() {
-        let output = Concatenation([EmptyString(), "Test1", "Test2", EmptyString()])
+        let output = Concatenate(EmptyString(), "Test1", "Test2", EmptyString())
             ._makeOutput()
 
         let expected = RichStringOutput(

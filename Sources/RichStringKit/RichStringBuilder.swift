@@ -13,8 +13,8 @@ public enum RichStringBuilder {
     @_disfavoredOverload
     public static func buildBlock(
         _ components: any RichString...
-    ) -> Concatenation {
-        Concatenation(components)
+    ) -> Concatenate {
+        Concatenate(components)
     }
 
     public static func buildEither<Content>(

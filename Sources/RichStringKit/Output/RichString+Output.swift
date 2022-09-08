@@ -22,9 +22,9 @@ extension String {
     public func _makeOutput() -> RichStringOutput { .init(.string(self)) }
 }
 
-// MARK: Concatenation
+// MARK: Concatenate
 
-extension Concatenation {
+extension Concatenate {
     public func _makeOutput() -> RichStringOutput {
         let outputs = contents.map { richString -> RichStringOutput.Content in
             guard case .content(let value) = richString._makeOutput().storage else {
@@ -68,9 +68,9 @@ extension ModifiedContent where Self: RichString {
     }
 }
 
-// MARK: Formatted
+// MARK: Format
 
-extension Formatted {
+extension Format {
     public func _makeOutput() -> RichStringOutput {
         // 1. Convert each arg to its content
         let argContents = args.lazy.map { $0._makeOutput().content }
