@@ -1,5 +1,5 @@
-protocol RichStringRenderer<Result> {
+protocol RichStringRenderer {
     associatedtype Result
     
-    static func render(_ component: some RichString) -> Result
+    static func render(_ richString: some RichString) -> Result
 }

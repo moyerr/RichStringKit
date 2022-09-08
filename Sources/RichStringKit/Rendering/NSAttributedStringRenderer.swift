@@ -16,8 +16,8 @@ enum NSAttributedStringRenderer: RichStringRenderer {
         let attributes: Attributes
     }
 
-    static func render(_ component: some RichString) -> NSAttributedString {
-        guard let modifierMap = ModifierMap(from: component) else {
+    static func render(_ richString: some RichString) -> NSAttributedString {
+        guard let modifierMap = ModifierMap(from: richString) else {
             return NSAttributedString()
         }
 
@@ -43,36 +43,7 @@ enum NSAttributedStringRenderer: RichStringRenderer {
     }
 }
 
-// MARK: - Public Interface
-
-public extension NSAttributedString {
-    convenience init(@RichStringBuilder _ content: () -> some RichString) {
-        self.init(attributedString: .richString(content))
-    }
-
-    static func richString(
-        @RichStringBuilder _ content: () -> some RichString
-    ) -> NSAttributedString {
-        content().render(using: NSAttributedStringRenderer.self)
-    }
-}
-
 // MARK: - Type Conversions
-
-private extension NSUnderlineStyle {
-    init(_ style: LineStyle) {
-        switch style {
-        case .single:               self = .single
-        case .thick:                self = .thick
-        case .double:               self = .double
-        case .patternDot:           self = .patternDot
-        case .patternDash:          self = .patternDash
-        case .patternDashDot:       self = .patternDashDot
-        case .patternDashDotDot:    self = .patternDashDotDot
-        case .byWord:               self = .byWord
-        }
-    }
-}
 
 private extension RichStringOutput.Modifier {
     func makeAttributes() -> NSAttributedStringRenderer.Attributes {
@@ -102,6 +73,21 @@ private extension RichStringOutput.Modifier {
                 .merging(modifier2.makeAttributes()) { current, new in
                     new
                 }
+        }
+    }
+}
+
+private extension NSUnderlineStyle {
+    init(_ style: LineStyle) {
+        switch style {
+        case .single:               self = .single
+        case .thick:                self = .thick
+        case .double:               self = .double
+        case .patternDot:           self = .patternDot
+        case .patternDash:          self = .patternDash
+        case .patternDashDot:       self = .patternDashDot
+        case .patternDashDotDot:    self = .patternDashDotDot
+        case .byWord:               self = .byWord
         }
     }
 }
