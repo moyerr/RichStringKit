@@ -6,13 +6,6 @@ public protocol RichStringModifier {
     @RichStringBuilder func body(_ content: Content) -> Body
 }
 
-extension RichStringModifier where Body == Never {
-    public func body(_ content: Self.Content) -> Body {
-        // Trap
-        preconditionFailure("\(#function) method of primitive modifier \(String(describing: Self.self)) should not be called")
-    }
-}
-
 public extension RichStringModifier {
    func concat<Other>(
        _ other: Other
@@ -23,6 +16,7 @@ public extension RichStringModifier {
 
 public struct _RichStringModifier_Content<Modifier>: RichString where Modifier: RichStringModifier {
     public typealias Body = Never
+    public var body: Body { bodyAccessDisallowed() }
 
     let content: any RichString
 

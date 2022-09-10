@@ -3,6 +3,7 @@ public struct Concatenate: RichString {
     public typealias Contents = [any RichString]
 
     public let contents: Contents
+    public var body: Body { bodyAccessDisallowed() }
 
     public init(_ contents: Contents) {
         self.contents = contents

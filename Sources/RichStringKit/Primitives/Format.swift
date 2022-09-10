@@ -11,6 +11,10 @@ public struct Format: RichString {
         self.formatString = formatString
         self.args = args
     }
+
+    public var body: Body {
+        bodyAccessDisallowed()
+    }
 }
 
 extension Format {
