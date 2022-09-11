@@ -1,11 +1,11 @@
 struct ModifierMap {
-    struct RangedModifier {
+    struct RangedModifiers {
         let range: Range<String.Index>
-        let modifier: RichStringOutput.Modifier
+        let modifiers: [RichStringOutput.Modifier]
     }
 
     var string: String = ""
-    var rangedModifiers: [RangedModifier] = []
+    var rangedModifiers: [RangedModifiers] = []
 }
 
 extension ModifierMap {
@@ -25,12 +25,12 @@ extension ModifierMap {
             let updatedString = modifierMap.string + nextPart
 
             switch content {
-            case .modified(_, let modifier):
+            case .modified(_, let modifiers):
                 let updatedEndIndex = updatedString.endIndex
                 let range = currentEndIndex ..< updatedEndIndex
 
                 modifierMap.rangedModifiers.append(
-                    RangedModifier(range: range, modifier: modifier)
+                    RangedModifiers(range: range, modifiers: modifiers)
                 )
             case .string:
                 modifierMap.string = updatedString

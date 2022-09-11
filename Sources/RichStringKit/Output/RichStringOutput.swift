@@ -12,26 +12,25 @@ public struct RichStringOutput: Equatable {
         case strikethroughStyle(LineStyle)
         case underlineColor(Color)
         case underlineStyle(LineStyle)
-        indirect case combined(Modifier, Modifier)
     }
 
     enum Content: Equatable {
         case empty
         case string(String)
-        indirect case modified(Content, Modifier)
+        indirect case modified(Content, [Modifier])
         indirect case sequence([Content])
     }
 
     enum Storage: Equatable {
         case content(Content)
-        case modifier(Modifier)
+        case modifiers([Modifier])
     }
 
     let storage: Storage
 
     var content: Content {
         guard case .content(let c) = storage else {
-            fatalError("Storage was not content")
+            preconditionFailure("Storage was not content")
         }
 
         return c
@@ -41,8 +40,12 @@ public struct RichStringOutput: Equatable {
         self.storage = .content(content)
     }
 
+    init(_ modifiers: [Modifier]) {
+        self.storage = .modifiers(modifiers)
+    }
+
     init(_ modifier: Modifier) {
-        self.storage = .modifier(modifier)
+        self.storage = .modifiers([modifier])
     }
 }
 

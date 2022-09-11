@@ -8,27 +8,22 @@ extension RichStringModifier {
 
         guard
             case .content(let modifiedContent) = output.storage,
-            case .modified(let content, let modifier) = modifiedContent
+            case .modified(let content, let modifiers) = modifiedContent
         else {
-            // If the output is not modified content, then this must be the empty modifier
+            // If the output is not modified content,
+            // then this must be the empty modifier.
             return EmptyModifier()._makeOutput()
         }
 
-        func combineModifiers(
-            _ content: RichStringOutput.Content,
-            _ modifier: RichStringOutput.Modifier
-        ) -> RichStringOutput.Modifier {
-            guard case let .modified(nestedContent, nestedModifier) = content else {
-                return modifier
-            }
+        return .init(content
+            .reduce(into: []) { array, nextContent in
+                guard case .modified(_, let nestedModifiers) = nextContent else {
+                    return
+                }
 
-            return .combined(
-                combineModifiers(nestedContent, nestedModifier),
-                modifier
-            )
-        }
-
-        return .init(combineModifiers(content, modifier))
+                array = nestedModifiers + array
+            } + modifiers
+        )
     }
 }
 
@@ -50,12 +45,12 @@ extension ModifiedContent where Self: RichStringModifier {
         let modifierOutput = modifier._makeOutput()
 
         guard
-            case .modifier(let lhs) = contentOutput.storage,
-            case .modifier(let rhs) = modifierOutput.storage
+            case .modifiers(let lhs) = contentOutput.storage,
+            case .modifiers(let rhs) = modifierOutput.storage
         else {
             preconditionFailure("RichStringModifier types \(type(of: content)), \(type(of: modifier)) must produce modifier output")
         }
 
-        return .init(.combined(lhs, rhs))
+        return .init(lhs + rhs)
     }
 }

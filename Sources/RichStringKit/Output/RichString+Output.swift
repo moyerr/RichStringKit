@@ -52,7 +52,7 @@ extension ModifiedContent where Self: RichString {
     private func primitiveModifierOutput() -> RichStringOutput {
         guard
             case .content(let lhs) = content._makeOutput().storage,
-            case .modifier(let rhs) = modifier._makeOutput().storage
+            case .modifiers(let rhs) = modifier._makeOutput().storage
         else {
             preconditionFailure("RichString type \(type(of: content)) must produce content output, and RichStringModifier type \(type(of: modifier)) must produce modifier output")
         }

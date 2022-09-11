@@ -26,7 +26,13 @@ enum NSAttributedStringRenderer: RichStringRenderer {
             .map {
                 RangedAttributes(
                     range: $0.range,
-                    attributes: $0.modifier.makeAttributes()
+                    attributes: $0.modifiers
+                        .reduce(into: Attributes()) { partialResult, next in
+                            partialResult
+                                .merge(next.makeAttributes()) { current, next in
+                                    next
+                                }
+                        }
                 )
             }
 
@@ -68,11 +74,6 @@ private extension RichStringOutput.Modifier {
             return [.underlineColor: color]
         case .underlineStyle(let style):
             return [.underlineStyle: NSUnderlineStyle(style).rawValue]
-        case .combined(let modifier1, let modifier2):
-            return modifier1.makeAttributes()
-                .merging(modifier2.makeAttributes()) { current, new in
-                    new
-                }
         }
     }
 }

@@ -36,7 +36,28 @@ final class RichStringBuilderOutputTests: XCTestCase {
             modifier: BaselineOffset(8)
         )._makeOutput()
 
-        let expected = RichStringOutput(.modified(.string("Test"), .baselineOffset(8)))
+        let expected = RichStringOutput(
+            .modified(.string("Test"), [.baselineOffset(8)])
+        )
+
+        XCTAssertEqual(output, expected)
+    }
+
+    func testNestedModifiedContentOutput() {
+        let output = ModifiedContent(
+            content: "Test",
+            modifier: ModifiedContent(
+                content: BaselineOffset(8),
+                modifier: Kern(8)
+            )
+        )._makeOutput()
+
+        let expected = RichStringOutput(
+            .modified(
+                .string("Test"),
+                [.baselineOffset(8), .kern(8)]
+            )
+        )
 
         XCTAssertEqual(output, expected)
     }
@@ -58,9 +79,9 @@ final class RichStringBuilderOutputTests: XCTestCase {
         let output = Fixture()._makeOutput()
         let expected = RichStringOutput(
             .sequence([
-                .modified(.string("Hello"), .backgroundColor(.red)),
-                .modified(.string("World"), .kern(8)),
-                .modified(.string("!"), .baselineOffset(8)),
+                .modified(.string("Hello"), [.backgroundColor(.red)]),
+                .modified(.string("World"), [.kern(8)]),
+                .modified(.string("!"), [.baselineOffset(8)]),
             ])
         )
 
@@ -148,10 +169,27 @@ final class RichStringBuilderOutputTests: XCTestCase {
         )._makeOutput()
 
         let expected = RichStringOutput(
-            .combined(
-                .foregroundColor(.white),
-                .backgroundColor(.black)
+            [.foregroundColor(.white), .backgroundColor(.black)]
+        )
+
+        XCTAssertEqual(output, expected)
+    }
+
+    func testNestedModifiedContentModifierOutput() {
+        let output = ModifiedContent(
+            content: ForegroundColor(.white),
+            modifier: ModifiedContent(
+                content: BackgroundColor(.black),
+                modifier: BaselineOffset(8)
             )
+        )._makeOutput()
+
+        let expected = RichStringOutput(
+            [
+                .foregroundColor(.white),
+                .backgroundColor(.black),
+                .baselineOffset(8)
+            ]
         )
 
         XCTAssertEqual(output, expected)
@@ -163,15 +201,17 @@ final class RichStringBuilderOutputTests: XCTestCase {
                 content
                     .foregroundColor(.white)
                     .backgroundColor(.black)
+                    .baselineOffset(8)
             }
         }
 
         let output = Fixture()._makeOutput()
         let expected = RichStringOutput(
-            .combined(
+            [
                 .foregroundColor(.white),
-                .backgroundColor(.black)
-            )
+                .backgroundColor(.black),
+                .baselineOffset(8)
+            ]
         )
 
         XCTAssertEqual(output, expected)
