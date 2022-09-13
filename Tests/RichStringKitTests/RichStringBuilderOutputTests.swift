@@ -43,7 +43,26 @@ final class RichStringBuilderOutputTests: XCTestCase {
         XCTAssertEqual(output, expected)
     }
 
-    func testNestedModifiedContentOutput() {
+    func testNestedContentModifiedContentOutput() {
+        let output = ModifiedContent(
+            content: ModifiedContent(
+                content: "Test",
+                modifier: Kern(8)
+            ),
+            modifier: BaselineOffset(8)
+        )._makeOutput()
+
+        let expected = RichStringOutput(
+            .modified(
+                .modified(.string("Test"), [.kern(8)]),
+                [.baselineOffset(8)]
+            )
+        )
+
+        XCTAssertEqual(output, expected)
+    }
+
+    func testNestedModifierModifiedContentOutput() {
         let output = ModifiedContent(
             content: "Test",
             modifier: ModifiedContent(
