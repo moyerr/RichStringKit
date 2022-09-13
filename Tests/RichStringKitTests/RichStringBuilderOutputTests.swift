@@ -1,12 +1,6 @@
 import XCTest
 @testable import RichStringKit
 
-#if os(macOS)
-let image = NSImage(systemSymbolName: "plus", accessibilityDescription: nil)!
-#else
-let image = UIImage(systemName: "plus")!
-#endif
-
 final class RichStringBuilderOutputTests: XCTestCase {
 
     // MARK: - Content Tests
@@ -26,8 +20,8 @@ final class RichStringBuilderOutputTests: XCTestCase {
     }
 
     func testAttachmentOutput() {
-        let output = Attachment(image)._makeOutput()
-        let expected = RichStringOutput(.modified(.attachment, .attachment(image)))
+        let output = Attachment(.testImage)._makeOutput()
+        let expected = RichStringOutput(.modified(.attachment, .attachment(.testImage)))
 
         XCTAssertEqual(output, expected)
     }

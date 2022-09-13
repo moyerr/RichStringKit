@@ -25,7 +25,7 @@ final class RichStringBuilderTests: XCTestCase {
     }
 
     func testAttachment() {
-        let content = Fixture(content: { Attachment(image) }).content()
+        let content = Fixture(content: { Attachment(.testImage) }).content()
 
         let actualType = type(of: content)
         let expectedType = Attachment.self
