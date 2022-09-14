@@ -12,12 +12,14 @@ public struct RichStringOutput: Equatable {
         case strikethroughStyle(LineStyle)
         case underlineColor(Color)
         case underlineStyle(LineStyle)
+        case attachment(Image)
         indirect case combined(Modifier, Modifier)
     }
 
     enum Content: Equatable {
         case empty
         case string(String)
+        case attachment
         indirect case modified(Content, Modifier)
         indirect case sequence([Content])
     }

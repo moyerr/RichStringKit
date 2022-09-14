@@ -19,6 +19,13 @@ final class RichStringBuilderOutputTests: XCTestCase {
         XCTAssertEqual(output, expected)
     }
 
+    func testAttachmentOutput() {
+        let output = Attachment(.testImage)._makeOutput()
+        let expected = RichStringOutput(.modified(.attachment, .attachment(.testImage)))
+
+        XCTAssertEqual(output, expected)
+    }
+
     func testConcatenatedOutput() {
         let output = Concatenate(EmptyString(), "Test1", "Test2", EmptyString())
             ._makeOutput()
