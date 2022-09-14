@@ -24,6 +24,15 @@ final class RichStringBuilderTests: XCTestCase {
         XCTAssertTrue(actualType == expectedType)
     }
 
+    func testAttachment() {
+        let content = Fixture(content: { Attachment(image) }).content()
+
+        let actualType = type(of: content)
+        let expectedType = Attachment.self
+
+        XCTAssertTrue(actualType == expectedType)
+    }
+
     func testMultipleStrings() {
         let content = Fixture {
             "Hello"

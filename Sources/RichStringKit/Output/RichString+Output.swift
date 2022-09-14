@@ -22,6 +22,14 @@ extension String {
     public func _makeOutput() -> RichStringOutput { .init(.string(self)) }
 }
 
+// MARK: Attachment
+
+extension Attachment {
+    public func _makeOutput() -> RichStringOutput {
+        .init(.modified(.attachment, .attachment(image)))
+    }
+}
+
 // MARK: Concatenate
 
 extension Concatenate {

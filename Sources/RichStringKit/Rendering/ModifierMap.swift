@@ -17,8 +17,15 @@ extension ModifierMap {
         self = content.reduce(into: ModifierMap()) { modifierMap, content in
             let nextPart = content
                 .reduce(into: "") { currentString, subContent in
-                    guard case .string(let str) = subContent else { return }
-                    currentString += str
+                    switch subContent {
+                    case .string(let string):
+                        currentString += string
+                    case .attachment:
+                        // Object Replacement Character
+                        currentString += "\u{FFFC}"
+                    default:
+                        return
+                    }
                 }
 
             let currentEndIndex = modifierMap.string.endIndex
@@ -32,7 +39,7 @@ extension ModifierMap {
                 modifierMap.rangedModifiers.append(
                     RangedModifier(range: range, modifier: modifier)
                 )
-            case .string:
+            case .string, .attachment:
                 modifierMap.string = updatedString
             default:
                 break

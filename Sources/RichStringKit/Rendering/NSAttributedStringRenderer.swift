@@ -48,6 +48,15 @@ enum NSAttributedStringRenderer: RichStringRenderer {
 private extension RichStringOutput.Modifier {
     func makeAttributes() -> NSAttributedStringRenderer.Attributes {
         switch self {
+        case .attachment(let image):
+            #if os(macOS)
+            let cell = NSTextAttachmentCell(imageCell: image)
+            let attachment = NSTextAttachment()
+            attachment.attachmentCell = cell
+            return [.attachment: attachment]
+            #else
+            return [.attachment: NSTextAttachment(image: image)]
+            #endif
         case .backgroundColor(let color):
             return [.backgroundColor: color]
         case .baselineOffset(let offset):
