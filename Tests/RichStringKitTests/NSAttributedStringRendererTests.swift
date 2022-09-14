@@ -48,8 +48,17 @@ final class NSAttributedStringRendererTests: XCTestCase {
             expected.attribute(.attachment, at: 0, effectiveRange: nil) as? NSTextAttachment
         )
 
+        #if os(macOS)
+        let actualImage = try XCTUnwrap(
+            (actualAttachment.attachmentCell as? NSTextAttachmentCell)?.image
+        )
+        let expectedImage = try XCTUnwrap(
+            (expectedAttachment.attachmentCell as? NSTextAttachmentCell)?.image
+        )
+        #else
         let actualImage = try XCTUnwrap(actualAttachment.image)
         let expectedImage = try XCTUnwrap(expectedAttachment.image)
+        #endif
 
         // We have to test the images because two NSTextAttachment instances are never equal
         XCTAssertIdentical(actualImage, expectedImage)
