@@ -69,4 +69,20 @@ final class RichStringBuilderTests: XCTestCase {
 
         XCTAssertTrue(actualType == expectedType)
     }
+
+    func testBuildEither() {
+        let condition = true
+        let content = Fixture {
+            if condition {
+                "Test"
+            } else {
+                EmptyString()
+            }
+        }.content()
+
+        let actualType = type(of: content)
+        let expectedType = ConditionalContent<String, EmptyString>.self
+
+        XCTAssertTrue(actualType == expectedType)
+    }
 }

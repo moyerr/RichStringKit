@@ -37,6 +37,25 @@ final class RichStringBuilderOutputTests: XCTestCase {
         XCTAssertEqual(output, expected)
     }
 
+    func testConditionalContentOutput() {
+        let trueContent = "Test".kern(8)
+        let falseContent = EmptyString()
+
+        let outputTrue = ConditionalContent<_, EmptyString>(
+            storage: .trueContent(trueContent)
+        )._makeOutput()
+
+        let outputFalse = ConditionalContent<ModifiedContent<String, Kern>, _>(
+            storage: .falseContent(falseContent)
+        )._makeOutput()
+
+        let expectedTrue = RichStringOutput(.modified(.string("Test"), .kern(8)))
+        let expectedFalse = RichStringOutput(RichStringOutput.Content.empty)
+
+        XCTAssertEqual(outputTrue, expectedTrue)
+        XCTAssertEqual(outputFalse, expectedFalse)
+    }
+
     func testFormatOutput() {
         let output0 = Format("%@", "Test")._makeOutput()
         let output1 = Format("%@%@", "Test", "Again")._makeOutput()

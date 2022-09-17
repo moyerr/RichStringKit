@@ -48,6 +48,17 @@ extension Concatenate {
     }
 }
 
+// MARK: Conditional Content
+
+extension ConditionalContent {
+    public func _makeOutput() -> RichStringOutput {
+        switch storage {
+        case .trueContent(let value):   return value._makeOutput()
+        case .falseContent(let value):  return value._makeOutput()
+        }
+    }
+}
+
 // MARK: Format
 
 extension Format {
