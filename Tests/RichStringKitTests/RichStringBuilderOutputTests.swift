@@ -26,7 +26,7 @@ final class RichStringBuilderOutputTests: XCTestCase {
         XCTAssertEqual(output, expected)
     }
 
-    func testConcatenatedOutput() {
+    func testConcatenateOutput() {
         let output = Concatenate(EmptyString(), "Test1", "Test2", EmptyString())
             ._makeOutput()
 
@@ -35,6 +35,31 @@ final class RichStringBuilderOutputTests: XCTestCase {
         )
 
         XCTAssertEqual(output, expected)
+    }
+
+    func testFormatOutput() {
+        let output0 = Format("%@", "Test")._makeOutput()
+        let output1 = Format("%@%@", "Test", "Again")._makeOutput()
+        let output2 = Format("Hello %@!", "Test")._makeOutput()
+        let output3 = Format("%@ is a %@", "This", "Test")._makeOutput()
+
+        let expected0 = RichStringOutput(.sequence([.string("Test")]))
+        let expected1 = RichStringOutput(.sequence([.string("Test"), .string("Again")]))
+        let expected2 = RichStringOutput(.sequence([
+            .string("Hello "),
+            .string("Test"),
+            .string("!")
+        ]))
+        let expected3 = RichStringOutput(.sequence([
+            .string("This"),
+            .string(" is a "),
+            .string("Test")
+        ]))
+
+        XCTAssertEqual(output0, expected0)
+        XCTAssertEqual(output1, expected1)
+        XCTAssertEqual(output2, expected2)
+        XCTAssertEqual(output3, expected3)
     }
 
     func testModifiedContentOutput() {

@@ -52,13 +52,15 @@ extension Concatenate {
 
 extension Format {
     public func _makeOutput() -> RichStringOutput {
+        #if canImport(_StringProcessing)
         if #available(iOS 16, tvOS 16, watchOS 9, macOS 13, *) {
             return .init(produceOutputUsingRegex())
-        } else {
-            return .init(produceOutputUsingLegacyRegex())
         }
+        #endif
+        return .init(produceOutputUsingLegacyRegex())
     }
 
+    #if canImport(_StringProcessing)
     @available(iOS 16, tvOS 16, watchOS 9, macOS 13, *)
     private func produceOutputUsingRegex() -> RichStringOutput.Content {
         var argContents = args.map { $0._makeOutput().content }
@@ -74,6 +76,7 @@ extension Format {
             }
         )
     }
+    #endif
 
     private func produceOutputUsingLegacyRegex() -> RichStringOutput.Content {
         guard let formatSpecifier = try? NSRegularExpression(pattern: #"%((?<index>\d+)\$)?@"#)

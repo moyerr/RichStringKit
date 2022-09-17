@@ -1,7 +1,8 @@
 import Foundation
 
+#if canImport(_StringProcessing)
+@available(iOS 16, tvOS 16, watchOS 9, macOS 13, *)
 extension BidirectionalCollection where SubSequence == Substring {
-    @available(iOS 16, tvOS 16, watchOS 9, macOS 13, *)
     func transformMatches<Output, Transformed>(
         of regex: some RegexComponent<Output>,
         using transform: (Regex<Output>.Match, Int) throws -> Transformed,
@@ -31,6 +32,7 @@ extension BidirectionalCollection where SubSequence == Substring {
         return result
     }
 }
+#endif
 
 extension String {
     func transformMatches<Transformed>(
