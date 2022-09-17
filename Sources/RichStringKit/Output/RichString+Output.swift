@@ -1,3 +1,5 @@
+import Foundation
+
 // MARK: - RichString Default
 
 extension RichString {
@@ -46,6 +48,53 @@ extension Concatenate {
     }
 }
 
+// MARK: Format
+
+extension Format {
+    public func _makeOutput() -> RichStringOutput {
+        #if canImport(_StringProcessing)
+        if #available(iOS 16, tvOS 16, watchOS 9, macOS 13, *) {
+            return .init(produceOutputUsingRegex())
+        }
+        #endif
+        return .init(produceOutputUsingLegacyRegex())
+    }
+
+    #if canImport(_StringProcessing)
+    @available(iOS 16, tvOS 16, watchOS 9, macOS 13, *)
+    private func produceOutputUsingRegex() -> RichStringOutput.Content {
+        var argContents = args.map { $0._makeOutput().content }
+
+        let formatSpecifier = /%((?<index>\d+)\$)?@/
+
+        return .sequence(
+            formatString.transformMatches(of: formatSpecifier) { match, index in
+                guard !argContents.isEmpty else { return .string("(null)") }
+                return argContents.removeFirst()
+            } transformNonMatches: { substring in
+                return .string(String(substring))
+            }
+        )
+    }
+    #endif
+
+    private func produceOutputUsingLegacyRegex() -> RichStringOutput.Content {
+        guard let formatSpecifier = try? NSRegularExpression(pattern: #"%((?<index>\d+)\$)?@"#)
+        else { return .empty }
+
+        var argContents = args.map { $0._makeOutput().content }
+
+        return .sequence(
+            formatString.transformMatches(of: formatSpecifier) { result, index in
+                guard !argContents.isEmpty else { return .string("(null)") }
+                return argContents.removeFirst()
+            } transformNonMatches: { substring in
+                return .string(String(substring))
+            }
+        )
+    }
+}
+
 // MARK: ModifiedContent
 
 extension ModifiedContent where Self: RichString {
@@ -73,72 +122,6 @@ extension ModifiedContent where Self: RichString {
         let modifiedContent = modifier.body(wrappedContent)
         let output = modifiedContent._makeOutput()
         return output
-    }
-}
-
-// MARK: Format
-
-extension Format {
-    public func _makeOutput() -> RichStringOutput {
-        // 1. Convert each arg to its content
-        let argContents = args.lazy.map { $0._makeOutput().content }
-
-        // 2. Reduce args into their raw strings
-        let rawArgs = argContents
-            .map {
-                $0.reduce(into: "") { result, nextContent in
-                    guard case .string(let str) = nextContent else { return }
-                    result += str
-                }
-            }
-
-        // 3. Produce the formatted raw String
-        let formatted = String(format: formatString, arguments: Array(rawArgs))
-
-        // 4. Get the difference between formatted and formatString
-        let difference = formatted.difference(from: formatString)
-
-        // 5. Get the set of indices that were removed from the format string
-        let removedIndices = Set(
-            difference.removals
-                .map { change in
-                    guard case .remove(let offset, _, _) = change else {
-                        preconditionFailure("Removals can only contain removals")
-                    }
-
-                    return formatString.index(formatString.startIndex, offsetBy: offset)
-                }
-        )
-
-        // 6. Split the format string on the removed indices
-        var pieces = formatString
-            .split { removedIndices.contains($0) }
-
-        // Special cases - if the removals were at the beginning or
-        // or end of the string, add an empty subsequence in those
-        // positions so we can interleave the args properly.
-
-        let firstIndex = formatString.startIndex
-        let lastIndex = formatString.index(before: formatString.endIndex)
-
-        if removedIndices.contains(firstIndex) {
-            pieces.insert(formatString[firstIndex ..< firstIndex], at: 0)
-        }
-
-        if removedIndices.contains(lastIndex) {
-            pieces.append(formatString[lastIndex ..< lastIndex])
-        }
-
-        let content = pieces
-            .map { substring -> any RichString in
-                substring.isEmpty ? EmptyString() : String(substring)
-            }
-            .map { $0._makeOutput().content }
-
-        // 7. Insert the arg contents between the split segments
-        let contents = Array(content.interleaved(with: argContents))
-
-        return .init(.sequence(contents))
     }
 }
 

@@ -197,4 +197,22 @@ final class NSAttributedStringRendererTests: XCTestCase {
 
         XCTAssertEqual(actual, expected)
     }
+
+    func testFormat() throws {
+        let richString = Format("Hello %@!!!") {
+            "World".kern(8)
+        }
+
+        let rawString = "Hello World!!!"
+        let actual = NSAttributedString(richString)
+        let worldRange = try XCTUnwrap(rawString.range(of: "World"))
+        let expected = NSMutableAttributedString(string: rawString)
+
+        expected.addAttributes(
+            [.kern: CGFloat(8)],
+            range: NSRange(worldRange, in: rawString)
+        )
+
+        XCTAssertEqual(actual, expected)
+    }
 }

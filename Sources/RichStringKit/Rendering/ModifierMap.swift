@@ -14,24 +14,13 @@ extension ModifierMap {
 
         guard case .content(let content) = output.storage else { return nil }
 
-        self = content.reduce(into: ModifierMap()) { modifierMap, content in
-            let nextPart = content
-                .reduce(into: "") { currentString, subContent in
-                    switch subContent {
-                    case .string(let string):
-                        currentString += string
-                    case .attachment:
-                        // Object Replacement Character
-                        currentString += "\u{FFFC}"
-                    default:
-                        return
-                    }
-                }
+        self = content.reduce(into: ModifierMap()) { modifierMap, subContent in
+            let nextPart = subContent.reduceIntoFinalString()
 
             let currentEndIndex = modifierMap.string.endIndex
             let updatedString = modifierMap.string + nextPart
 
-            switch content {
+            switch subContent {
             case .modified(_, let modifier):
                 let updatedEndIndex = updatedString.endIndex
                 let range = currentEndIndex ..< updatedEndIndex
