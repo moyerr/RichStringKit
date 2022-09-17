@@ -1,45 +1,30 @@
-internal extension Collection {
-    func split(
-        maxSplits: Int = .max,
-        omittingEmptySubsequences: Bool = true,
-        whereSeparator isSeparator: (Index) throws -> Bool
-    ) rethrows -> [SubSequence] {
-        precondition(maxSplits >= 0, "Must take zero or more splits")
+@available(iOS 16, tvOS 16, watchOS 9, macOS 13, *)
+extension BidirectionalCollection where SubSequence == Substring {
+    func transformMatches<Output, Transformed>(
+        of r: some RegexComponent<Output>,
+        using transform: (Regex<Output>.Match, Int) throws -> Transformed,
+        transformNonMatches: (SubSequence) throws -> Transformed
+    ) rethrows -> [Transformed] {
+        if isEmpty { return [] }
 
-        var result: [SubSequence] = []
+        let matches = matches(of: r)
+
+        var result: [Transformed] = []
         var subSequenceStart: Index = startIndex
 
-        func appendSubsequence(end: Index) -> Bool {
-            if subSequenceStart == end && omittingEmptySubsequences {
-                return false
-            }
-            result.append(self[subSequenceStart..<end])
-            return true
+        func appendSubsequence(end: Index) throws {
+            if subSequenceStart == end { return }
+            let transformed = try transformNonMatches(self[subSequenceStart ..< end])
+            result.append(transformed)
         }
 
-        if maxSplits == 0 || isEmpty {
-            _ = appendSubsequence(end: endIndex)
-            return result
+        for (index, match) in matches.enumerated() {
+            try appendSubsequence(end: match.range.lowerBound)
+            result.append(try transform(match, index))
+            subSequenceStart = match.range.upperBound
         }
 
-        var subSequenceEnd = subSequenceStart
-        let cachedEndIndex = endIndex
-        while subSequenceEnd != cachedEndIndex {
-            if try isSeparator(subSequenceEnd) {
-                let didAppend = appendSubsequence(end: subSequenceEnd)
-                formIndex(after: &subSequenceEnd)
-                subSequenceStart = subSequenceEnd
-                if didAppend && result.count == maxSplits {
-                    break
-                }
-                continue
-            }
-            formIndex(after: &subSequenceEnd)
-        }
-
-        if subSequenceStart != cachedEndIndex || !omittingEmptySubsequences {
-            result.append(self[subSequenceStart..<cachedEndIndex])
-        }
+        try appendSubsequence(end: endIndex)
 
         return result
     }

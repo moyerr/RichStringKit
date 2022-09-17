@@ -1,3 +1,4 @@
+@available(iOS 16, tvOS 16, watchOS 9, macOS 13, *)
 public struct Format: RichString {
     public typealias Body = Never
 
@@ -17,6 +18,7 @@ public struct Format: RichString {
     }
 }
 
+@available(iOS 16, tvOS 16, watchOS 9, macOS 13, *)
 extension Format {
     public init(
         _ formatString: String,

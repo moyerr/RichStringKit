@@ -69,4 +69,18 @@ extension RichStringOutput.Content {
         
         return accumulator
     }
+
+    func reduceIntoFinalString() -> String {
+        reduce(into: "") { result, subContent in
+            switch subContent {
+            case .string(let string):
+                result += string
+            case .attachment:
+                // Object Replacement Character
+                result += "\u{FFFC}"
+            default:
+                return
+            }
+        }
+    }
 }
