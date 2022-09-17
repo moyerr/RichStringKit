@@ -1,3 +1,5 @@
+import Foundation
+
 // MARK: - RichString Default
 
 extension RichString {
@@ -46,6 +48,50 @@ extension Concatenate {
     }
 }
 
+// MARK: Format
+
+extension Format {
+    public func _makeOutput() -> RichStringOutput {
+        if #available(iOS 16, tvOS 16, watchOS 9, macOS 13, *) {
+            return .init(produceOutputUsingRegex())
+        } else {
+            return .init(produceOutputUsingLegacyRegex())
+        }
+    }
+
+    @available(iOS 16, tvOS 16, watchOS 9, macOS 13, *)
+    private func produceOutputUsingRegex() -> RichStringOutput.Content {
+        var argContents = args.map { $0._makeOutput().content }
+
+        let formatSpecifier = /%((?<index>\d+)\$)?@/
+
+        return .sequence(
+            formatString.transformMatches(of: formatSpecifier) { match, index in
+                guard !argContents.isEmpty else { return .string("(null)") }
+                return argContents.removeFirst()
+            } transformNonMatches: { substring in
+                return .string(String(substring))
+            }
+        )
+    }
+
+    private func produceOutputUsingLegacyRegex() -> RichStringOutput.Content {
+        guard let formatSpecifier = try? NSRegularExpression(pattern: #"%((?<index>\d+)\$)?@"#)
+        else { return .empty }
+
+        var argContents = args.map { $0._makeOutput().content }
+
+        return .sequence(
+            formatString.transformMatches(of: formatSpecifier) { result, index in
+                guard !argContents.isEmpty else { return .string("(null)") }
+                return argContents.removeFirst()
+            } transformNonMatches: { substring in
+                return .string(String(substring))
+            }
+        )
+    }
+}
+
 // MARK: ModifiedContent
 
 extension ModifiedContent where Self: RichString {
@@ -73,26 +119,6 @@ extension ModifiedContent where Self: RichString {
         let modifiedContent = modifier.body(wrappedContent)
         let output = modifiedContent._makeOutput()
         return output
-    }
-}
-
-// MARK: Format
-
-@available(iOS 16, tvOS 16, watchOS 9, macOS 13, *)
-extension Format {
-    public func _makeOutput() -> RichStringOutput {
-        var argContents = args.map { $0._makeOutput().content }
-
-        let formatSpecifier = /%((?<index>\d+)\$)?@/
-
-        return .init(.sequence(
-            formatString.transformMatches(of: formatSpecifier) { match, index in
-                guard !argContents.isEmpty else { return .string("(null)") }
-                return argContents.removeFirst()
-            } transformNonMatches: { substring in
-                return .string(String(substring))
-            }
-        ))
     }
 }
 
