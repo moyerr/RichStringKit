@@ -61,6 +61,7 @@ final class RichStringBuilderOutputTests: XCTestCase {
         let output1 = Format("%@%@", "Test", "Again")._makeOutput()
         let output2 = Format("Hello %@!", "Test")._makeOutput()
         let output3 = Format("%@ is a %@", "This", "Test")._makeOutput()
+        let output4 = Format("", "Test")._makeOutput()
 
         let expected0 = RichStringOutput(.sequence([.string("Test")]))
         let expected1 = RichStringOutput(.sequence([.string("Test"), .string("Again")]))
@@ -74,11 +75,13 @@ final class RichStringBuilderOutputTests: XCTestCase {
             .string(" is a "),
             .string("Test")
         ]))
+        let expected4 = RichStringOutput(.sequence([]))
 
         XCTAssertEqual(output0, expected0)
         XCTAssertEqual(output1, expected1)
         XCTAssertEqual(output2, expected2)
         XCTAssertEqual(output3, expected3)
+        XCTAssertEqual(output4, expected4)
     }
 
     func testModifiedContentOutput() {
@@ -112,6 +115,28 @@ final class RichStringBuilderOutputTests: XCTestCase {
                 .modified(.string("Hello"), .backgroundColor(.red)),
                 .modified(.string("World"), .kern(8)),
                 .modified(.string("!"), .baselineOffset(8)),
+            ])
+        )
+
+        XCTAssertEqual(output, expected)
+    }
+
+    func testLoopedContentOutput() {
+        struct Fixture: RichString {
+            let values = ["Hello", "Test", "World"]
+            var body: some RichString {
+                for value in values {
+                    value.kern(8)
+                }
+            }
+        }
+
+        let output = Fixture()._makeOutput()
+        let expected = RichStringOutput(
+            .sequence([
+                .modified(.string("Hello"), .kern(8)),
+                .modified(.string("Test"), .kern(8)),
+                .modified(.string("World"), .kern(8))
             ])
         )
 

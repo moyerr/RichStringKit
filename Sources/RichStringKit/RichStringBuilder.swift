@@ -17,6 +17,12 @@ public enum RichStringBuilder {
         Concatenate(components)
     }
 
+    public static func buildArray(
+        _ components: [any RichString]
+    ) -> Concatenate {
+        Concatenate(components)
+    }
+
     public static func buildEither<TrueContent, FalseContent>(
         first: TrueContent
     ) -> ConditionalContent<TrueContent, FalseContent> where TrueContent: RichString, FalseContent: RichString {
