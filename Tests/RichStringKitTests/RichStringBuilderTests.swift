@@ -1,5 +1,5 @@
-import XCTest
 @testable import RichStringKit
+import XCTest
 
 final class RichStringBuilderTests: XCTestCase {
     private struct Fixture<Content: RichString> {
@@ -7,7 +7,7 @@ final class RichStringBuilderTests: XCTestCase {
     }
 
     func testEmpty() {
-        let content = Fixture(content: {}).content()
+        let content = Fixture { }.content()
 
         let actualType = type(of: content)
         let expectedType = EmptyString.self
@@ -16,7 +16,9 @@ final class RichStringBuilderTests: XCTestCase {
     }
 
     func testSingleString() {
-        let content = Fixture(content: { "Test" }).content()
+        let content = Fixture {
+            "Test"
+        }.content()
 
         let actualType = type(of: content)
         let expectedType = String.self
@@ -25,7 +27,9 @@ final class RichStringBuilderTests: XCTestCase {
     }
 
     func testAttachment() {
-        let content = Fixture(content: { Attachment(.testImage) }).content()
+        let content = Fixture {
+            Attachment(.testImage)
+        }.content()
 
         let actualType = type(of: content)
         let expectedType = Attachment.self

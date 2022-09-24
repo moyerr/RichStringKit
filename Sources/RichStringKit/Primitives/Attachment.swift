@@ -10,6 +10,7 @@ public struct Attachment: RichString {
     public typealias Body = Never
     public var body: Never { bodyAccessDisallowed() }
 
+    // swiftlint:disable type_contents_order
     #if os(macOS)
     public let image: NSImage
 
@@ -23,4 +24,5 @@ public struct Attachment: RichString {
         self.image = image
     }
     #endif
+    // swiftlint:enable type_contents_order
 }

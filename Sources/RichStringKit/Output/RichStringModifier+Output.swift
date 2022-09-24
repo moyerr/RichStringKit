@@ -53,6 +53,7 @@ extension ModifiedContent where Self: RichStringModifier {
             case .modifier(let lhs) = contentOutput.storage,
             case .modifier(let rhs) = modifierOutput.storage
         else {
+            // swiftlint:disable:next line_length
             preconditionFailure("RichStringModifier types \(type(of: content)), \(type(of: modifier)) must produce modifier output")
         }
 

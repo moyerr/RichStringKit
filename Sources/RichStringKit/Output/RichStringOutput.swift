@@ -32,11 +32,11 @@ public struct RichStringOutput: Equatable {
     let storage: Storage
 
     var content: Content {
-        guard case .content(let c) = storage else {
+        guard case .content(let value) = storage else {
             fatalError("Storage was not content")
         }
 
-        return c
+        return value
     }
 
     init(_ content: Content) {
@@ -51,7 +51,7 @@ public struct RichStringOutput: Equatable {
 extension RichStringOutput.Content {
     func reduce<Result>(
         into initialResult: Result,
-        _ updateAccumulatingResult: (inout Result, Self) throws -> ()
+        _ updateAccumulatingResult: (inout Result, Self) throws -> Void
     ) rethrows -> Result {
         var accumulator = initialResult
         try updateAccumulatingResult(&accumulator, self)
@@ -66,7 +66,7 @@ extension RichStringOutput.Content {
         default:
             break
         }
-        
+
         return accumulator
     }
 

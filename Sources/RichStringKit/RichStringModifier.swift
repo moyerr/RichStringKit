@@ -6,12 +6,12 @@ public protocol RichStringModifier {
     @RichStringBuilder func body(_ content: Content) -> Body
 }
 
-public extension RichStringModifier {
-   func concat<Other>(
-       _ other: Other
-   ) -> ModifiedContent<Self, Other> {
-       .init(content: self, modifier: other)
-   }
+extension RichStringModifier {
+    public func concat<Other>(
+        _ other: Other
+    ) -> ModifiedContent<Self, Other> {
+        .init(content: self, modifier: other)
+    }
 }
 
 public struct _RichStringModifier_Content<Modifier>: RichString where Modifier: RichStringModifier {

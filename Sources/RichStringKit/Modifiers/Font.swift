@@ -20,13 +20,13 @@ public struct _Font: RichStringModifier {
     }
 }
 
-public extension RichString {
+extension RichString {
     #if os(macOS)
-    func font(_ font: NSFont) -> some RichString {
+    public func font(_ font: NSFont) -> some RichString {
         modifier(_Font(font))
     }
     #else
-    func font(_ font: UIFont) -> some RichString {
+    public func font(_ font: UIFont) -> some RichString {
         modifier(_Font(font))
     }
     #endif
