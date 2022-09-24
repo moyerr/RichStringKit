@@ -17,16 +17,22 @@ public enum RichStringBuilder {
         Concatenate(components)
     }
 
-    public static func buildEither<Content>(
-        first content: Content
-    ) -> Content where Content: RichString {
-        content
+    public static func buildArray(
+        _ components: [any RichString]
+    ) -> Concatenate {
+        Concatenate(components)
     }
 
-    public static func buildEither<Content>(
-        second content: Content
-    ) -> Content where Content: RichString {
-        content
+    public static func buildEither<TrueContent, FalseContent>(
+        first: TrueContent
+    ) -> ConditionalContent<TrueContent, FalseContent> where TrueContent: RichString, FalseContent: RichString {
+        ConditionalContent(storage: .trueContent(first))
+    }
+
+    public static func buildEither<TrueContent, FalseContent>(
+        second: FalseContent
+    ) -> ConditionalContent<TrueContent, FalseContent> where TrueContent: RichString, FalseContent: RichString {
+        ConditionalContent(storage: .falseContent(second))
     }
 
     public static func buildLimitedAvailability<Content>(

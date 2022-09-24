@@ -45,6 +45,20 @@ final class RichStringBuilderTests: XCTestCase {
         XCTAssertTrue(actualType == expectedType)
     }
 
+    func testLooping() {
+        let values = ["Hello", "Test", "World"]
+        let content = Fixture {
+            for value in values {
+                value.kern(8)
+            }
+        }.content()
+
+        let actualType = type(of: content)
+        let expectedType = Concatenate.self
+
+        XCTAssertTrue(actualType == expectedType)
+    }
+
     func testSingleModifier() {
         let content = Fixture {
             "Test"
@@ -66,6 +80,22 @@ final class RichStringBuilderTests: XCTestCase {
 
         let actualType = type(of: content)
         let expectedType = ModifiedContent<ModifiedContent<String, ForegroundColor>, BackgroundColor>.self
+
+        XCTAssertTrue(actualType == expectedType)
+    }
+
+    func testBuildEither() {
+        let condition = true
+        let content = Fixture {
+            if condition {
+                "Test"
+            } else {
+                EmptyString()
+            }
+        }.content()
+
+        let actualType = type(of: content)
+        let expectedType = ConditionalContent<String, EmptyString>.self
 
         XCTAssertTrue(actualType == expectedType)
     }
