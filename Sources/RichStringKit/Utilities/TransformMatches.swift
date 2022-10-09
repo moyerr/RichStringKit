@@ -1,3 +1,4 @@
+// swiftlint:disable:this file_name
 import Foundation
 
 #if canImport(_StringProcessing)
@@ -68,5 +69,4 @@ extension String {
 
         return result
     }
-
 }

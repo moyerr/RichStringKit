@@ -76,10 +76,12 @@ extension Format {
     private func produceOutputUsingRegex() -> RichStringOutput.Content {
         var argContents = args.map { $0._makeOutput().content }
 
+        // SwiftLint thinks Regex literal is an operator
+        // swiftlint:disable:next operator_usage_whitespace
         let formatSpecifier = /%((?<index>\d+)\$)?@/
 
         return .sequence(
-            formatString.transformMatches(of: formatSpecifier) { match, index in
+            formatString.transformMatches(of: formatSpecifier) { _, _ in
                 guard !argContents.isEmpty else { return .string("(null)") }
                 return argContents.removeFirst()
             } transformNonMatches: { substring in
@@ -96,7 +98,7 @@ extension Format {
         var argContents = args.map { $0._makeOutput().content }
 
         return .sequence(
-            formatString.transformMatches(of: formatSpecifier) { result, index in
+            formatString.transformMatches(of: formatSpecifier) { _, _ in
                 guard !argContents.isEmpty else { return .string("(null)") }
                 return argContents.removeFirst()
             } transformNonMatches: { substring in
@@ -122,6 +124,7 @@ extension ModifiedContent where Self: RichString {
             case .content(let lhs) = content._makeOutput().storage,
             case .modifier(let rhs) = modifier._makeOutput().storage
         else {
+            // swiftlint:disable:next line_length
             preconditionFailure("RichString type \(type(of: content)) must produce content output, and RichStringModifier type \(type(of: modifier)) must produce modifier output")
         }
 

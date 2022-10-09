@@ -1,8 +1,7 @@
-import XCTest
 @testable import RichStringKit
+import XCTest
 
 final class RichStringBuilderOutputTests: XCTestCase {
-
     // MARK: - Content Tests
 
     func testEmptyStringOutput() {
@@ -114,7 +113,7 @@ final class RichStringBuilderOutputTests: XCTestCase {
             .sequence([
                 .modified(.string("Hello"), .backgroundColor(.red)),
                 .modified(.string("World"), .kern(8)),
-                .modified(.string("!"), .baselineOffset(8)),
+                .modified(.string("!"), .baselineOffset(8))
             ])
         )
 
@@ -187,8 +186,8 @@ final class RichStringBuilderOutputTests: XCTestCase {
         XCTAssertEqual(output, expected)
     }
 
-
     func testLinkOutput() {
+        // swiftlint:disable:next force_unwrapping
         let url = URL(string: "http://www.example.com")!
         let output = Link(url)._makeOutput()
         let expected = RichStringOutput(.link(url))

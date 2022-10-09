@@ -22,7 +22,7 @@ public struct BackgroundColor: RichStringModifier {
 
 public struct ForegroundColor: RichStringModifier {
     public typealias Body = Never
-    
+
     let color: Color
 
     init(_ color: Color) {
@@ -50,29 +50,29 @@ public struct UnderlineColor: RichStringModifier {
 
 // MARK: Modifier Methods
 
-public extension RichString {
+extension RichString {
     #if os(macOS)
-    func foregroundColor(_ color: NSColor) -> some RichString {
+    public func foregroundColor(_ color: NSColor) -> some RichString {
         modifier(ForegroundColor(color))
     }
 
-    func backgroundColor(_ color: NSColor) -> some RichString {
+    public func backgroundColor(_ color: NSColor) -> some RichString {
         modifier(BackgroundColor(color))
     }
 
-    func underlineColor(_ color: NSColor) -> some RichString {
+    public func underlineColor(_ color: NSColor) -> some RichString {
         modifier(UnderlineColor(color))
     }
     #else
-    func foregroundColor(_ color: UIColor) -> some RichString {
+    public func foregroundColor(_ color: UIColor) -> some RichString {
         modifier(ForegroundColor(color))
     }
 
-    func backgroundColor(_ color: UIColor) -> some RichString {
+    public func backgroundColor(_ color: UIColor) -> some RichString {
         modifier(BackgroundColor(color))
     }
 
-    func underlineColor(_ color: UIColor) -> some RichString {
+    public func underlineColor(_ color: UIColor) -> some RichString {
         modifier(UnderlineColor(color))
     }
     #endif

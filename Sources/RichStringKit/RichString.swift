@@ -1,12 +1,13 @@
 public protocol RichString {
     associatedtype Body: RichString
 
-    func _makeOutput() -> RichStringOutput
     @RichStringBuilder var body: Body { get }
+
+    func _makeOutput() -> RichStringOutput
 }
 
-public extension RichString {
-    func modifier<T>(_ modifier: T) -> ModifiedContent<Self, T> {
+extension RichString {
+    public func modifier<T>(_ modifier: T) -> ModifiedContent<Self, T> {
         .init(content: self, modifier: modifier)
     }
 }

@@ -1,3 +1,5 @@
+// swiftlint:disable:this file_name
+
 public enum LineStyle {
     case single
     case thick
@@ -39,12 +41,12 @@ public struct UnderlineStyle: RichStringModifier {
 
 // MARK: Modifier Methods
 
-public extension RichString {
-    func strikethroughStyle(_ style: LineStyle) -> some RichString {
+extension RichString {
+    public func strikethroughStyle(_ style: LineStyle) -> some RichString {
         modifier(StrikethroughStyle(style))
     }
 
-    func underlineStyle(_ style: LineStyle) -> some RichString {
+    public func underlineStyle(_ style: LineStyle) -> some RichString {
         modifier(UnderlineStyle(style))
     }
 }

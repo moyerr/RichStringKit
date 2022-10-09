@@ -12,8 +12,8 @@ public struct BaselineOffset: RichStringModifier {
     }
 }
 
-public extension RichString {
-    func baselineOffset(_ offset: Double) -> some RichString {
+extension RichString {
+    public func baselineOffset(_ offset: Double) -> some RichString {
         modifier(BaselineOffset(offset))
     }
 }

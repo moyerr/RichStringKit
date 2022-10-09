@@ -12,8 +12,8 @@ public struct Kern: RichStringModifier {
     }
 }
 
-public extension RichString {
-    func kern(_ value: Double) -> some RichString {
+extension RichString {
+    public func kern(_ value: Double) -> some RichString {
         modifier(Kern(value))
     }
 }

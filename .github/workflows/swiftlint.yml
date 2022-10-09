@@ -1,0 +1,23 @@
+name: SwiftLint
+
+on:
+  pull_request:
+    branches:
+      - 'main'
+      - 'release/**'
+    paths:
+      - '.github/workflows/swiftlint.yml'
+      - '.swiftlint.yml'
+      - '**/*.swift'
+
+jobs:
+  SwiftLint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Fetch PR's target branch
+        run: git fetch --no-tags --prune --depth=1 origin ${{ github.base_ref }}
+      - name: GitHub Action for SwiftLint
+        uses: sinoru/actions-swiftlint@v6
+        env:
+          DIFF_BASE: ${{ github.base_ref }}

@@ -4,16 +4,16 @@ public struct Format: RichString {
     let formatString: String
     let args: [any RichString]
 
+    public var body: Body {
+        bodyAccessDisallowed()
+    }
+
     public init(
         _ formatString: String,
         _ args: (any RichString)...
     ) {
         self.formatString = formatString
         self.args = args
-    }
-
-    public var body: Body {
-        bodyAccessDisallowed()
     }
 }
 

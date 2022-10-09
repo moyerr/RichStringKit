@@ -23,10 +23,10 @@ enum NSAttributedStringRenderer: RichStringRenderer {
 
         let finalString = modifierMap.string
         let attributesByRange = modifierMap.rangedModifiers
-            .map {
+            .map { rangedModifier in
                 RangedAttributes(
-                    range: $0.range,
-                    attributes: $0.modifier.makeAttributes()
+                    range: rangedModifier.range,
+                    attributes: rangedModifier.modifier.makeAttributes()
                 )
             }
 
@@ -45,8 +45,9 @@ enum NSAttributedStringRenderer: RichStringRenderer {
 
 // MARK: - Type Conversions
 
-private extension RichStringOutput.Modifier {
-    func makeAttributes() -> NSAttributedStringRenderer.Attributes {
+extension RichStringOutput.Modifier {
+    // swiftlint:disable:next cyclomatic_complexity
+    fileprivate func makeAttributes() -> NSAttributedStringRenderer.Attributes {
         switch self {
         case .attachment(let image):
             #if os(macOS)
@@ -68,7 +69,7 @@ private extension RichStringOutput.Modifier {
         case .empty:
             return [:]
         case .kern(let value):
-            return [.kern: NSNumber(value: value)]
+            return [.kern: CGFloat(value)]
         case .link(let url):
             return [.link: url]
         case .strikethroughStyle(let style):
@@ -77,17 +78,17 @@ private extension RichStringOutput.Modifier {
             return [.underlineColor: color]
         case .underlineStyle(let style):
             return [.underlineStyle: NSUnderlineStyle(style).rawValue]
-        case .combined(let modifier1, let modifier2):
+        case let .combined(modifier1, modifier2):
             return modifier1.makeAttributes()
-                .merging(modifier2.makeAttributes()) { current, new in
+                .merging(modifier2.makeAttributes()) { _, new in
                     new
                 }
         }
     }
 }
 
-private extension NSUnderlineStyle {
-    init(_ style: LineStyle) {
+extension NSUnderlineStyle {
+    fileprivate init(_ style: LineStyle) {
         switch style {
         case .single:               self = .single
         case .thick:                self = .thick

@@ -14,8 +14,8 @@ public struct Link: RichStringModifier {
     }
 }
 
-public extension RichString {
-    func link(_ url: URL) -> some RichString {
+extension RichString {
+    public func link(_ url: URL) -> some RichString {
         modifier(Link(url))
     }
 }

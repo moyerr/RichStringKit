@@ -1,6 +1,6 @@
 //
 //  NSAttributedStringRendererTests.swift
-//  
+//
 //
 //  Created by Robert Moyer on 9/13/22.
 //
