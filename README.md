@@ -1,5 +1,9 @@
 # 💰 RichStringKit 🔡
 
+![Swift Version 5.7](https://img.shields.io/badge/Swift-5.7-F05138)
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/moyerr/RichStringKit/Swift/main?label=Build&logo=github)
+![Updated](https://img.shields.io/github/last-commit/moyerr/RichStringKit/main?color=1f6feb&label=Updated)
+
 RichStringKit is a declarative DSL for building rich text in Swift.
 
 ### Table of Contents
@@ -21,47 +25,43 @@ ___
 </picture>
 
 
-Creating this string with `NSAttributedString` might look something like this:
+Creating this text with `NSAttributedString` might look something like this:
 
 ```Swift
 let attributedString = NSMutableAttributedString(
     string: "For the love of Swift ",
-    attributes: [.font: UIFont.systemFont(ofSize: 20)]
+    attributes: [.font: UIFont.systemFont(ofSize: 40)]
 )
 
 let strongAttributes: [NSAttributedString.Key: Any] = [
     .foregroundColor: UIColor.swift,
-    .font: UIFont.systemFont(ofSize: 20, weight: .semibold)
+    .font: UIFont.boldSystemFont(ofSize: 40)
 ]
-
-if let swiftRange = attributedString.string.range(of: "Swift") {
-    attributedString.addAttributes(
-        strongAttributes,
-        range: NSRange(swiftRange, in: attributedString.string)
-    )
-}
 
 if let heartImage = UIImage(systemName: "swift") {
     let heartAttachment = NSTextAttachment(image: heartImage)
-    let heartString = NSMutableAttributedString(attachment: heartAttachment)
-    let range = heartString.string.startIndex ..< heartString.string.endIndex
-
-    heartString.addAttributes(
-        strongAttributes,
-        range: NSRange(range, in: heartString.string)
-    )
+    let heartString = NSAttributedString(attachment: heartAttachment)
 
     attributedString.append(heartString)
+
+    if let swiftRange = attributedString.string.range(of: "Swift") {
+        let strongRange = swiftRange.lowerBound ..< attributedString.string.endIndex
+
+        attributedString.addAttributes(
+            strongAttributes,
+            range: NSRange(strongRange, in: attributedString.string)
+        )
+    }
 }
 ```
 
-Building the same string with `RichStringKit` looks like this:
+Creating the same text with `RichStringKit` looks like this:
 
 ```Swift
 let richString = NSAttributedString {
     "For the love of "
     Group {
-        "Swift"
+        "Swift "
         Attachment(systemName: "swift")
     }
     .foregroundColor(.swift)
@@ -69,13 +69,17 @@ let richString = NSAttributedString {
 }
 ```
 
+
+
 ## Documentation 📖
 
 _Full documentation coming soon_
 
-Until then, take a look at some [example usage](#usage-)
+Until then, take a look at some [example usage](#usage-).
 
 ## Installation 💻
+
+> RichStringKit requires Swift 5.7
 
 ### Swift Package Manager 📦
 
