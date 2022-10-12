@@ -1,6 +1,5 @@
 @resultBuilder
 public enum RichStringBuilder {
-
     public static func buildExpression<Content>(
         _ expression: Content?
     ) -> ConditionalContent<Content, EmptyString> where Content: RichString {
