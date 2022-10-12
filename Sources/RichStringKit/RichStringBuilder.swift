@@ -1,5 +1,25 @@
 @resultBuilder
 public enum RichStringBuilder {
+    public static func buildExpression<Content>(
+        _ expression: Content?
+    ) -> ConditionalContent<Content, EmptyString> where Content: RichString {
+        if let content = expression {
+            return ConditionalContent(storage: .trueContent(content))
+        } else {
+            return ConditionalContent(storage: .falseContent(EmptyString()))
+        }
+    }
+
+    public static func buildExpression(
+        _ expression: Never
+    ) -> Never { /* Cannot be executed */ }
+
+    public static func buildExpression<Content>(
+        _ expression: Content
+    ) -> Content where Content: RichString {
+        expression
+    }
+
     public static func buildBlock() -> some RichString {
         EmptyString()
     }

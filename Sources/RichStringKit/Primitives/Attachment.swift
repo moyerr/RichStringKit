@@ -17,10 +17,26 @@ public struct Attachment: RichString {
     public init(_ image: NSImage) {
         self.image = image
     }
+
+    public init?(systemName: String) {
+        guard let image = NSImage(
+            systemSymbolName: systemName,
+            accessibilityDescription: nil
+        ) else {
+            return nil
+        }
+
+        self.image = image
+    }
     #else
     public let image: UIImage
 
     public init(_ image: UIImage) {
+        self.image = image
+    }
+
+    public init?(systemName: String) {
+        guard let image = UIImage(systemName: systemName) else { return nil }
         self.image = image
     }
     #endif
