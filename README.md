@@ -20,8 +20,8 @@ ___
 `NSAttributedString` is a powerful tool for creating rich text, but using it can be cumbersome and error-prone. Consider the following attributed text:
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset= images/rich-string-0-dark.png>
-  <img width=400 alt="Text changing depending on mode. Light: 'So light!' Dark: 'So dark!'" src=images/rich-string-0-light.png>
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/moyerr/RichStringKit/main/images/rich-string-0-dark.png">
+  <img width=400 alt="Image of an attributed string that reads 'For the love of Swift' with the Swift programming language logo" src="https://raw.githubusercontent.com/moyerr/RichStringKit/main/images/rich-string-0-light.png">
 </picture>
 
 
