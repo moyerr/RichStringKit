@@ -1,7 +1,7 @@
 # 💰 RichStringKit 🔡
 
 ![Swift Version 5.7](https://img.shields.io/badge/Swift-5.7-F05138)
-![GitHub Workflow Status](https://img.shields.io/github/workflow/status/moyerr/RichStringKit/Swift/main?label=Build&logo=github)
+![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/moyerr/RichStringKit/swift.yml?branch=main&label=Build&logo=github)
 ![Updated](https://img.shields.io/github/last-commit/moyerr/RichStringKit/main?color=1f6feb&label=Updated)
 
 RichStringKit is a declarative DSL for building rich text in Swift.
