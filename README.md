@@ -1,6 +1,7 @@
 # 💰 RichStringKit 🔡
 
-![Swift Version 5.7](https://img.shields.io/badge/Swift-5.7-F05138)
+[![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fmoyerr%2FRichStringKit%2Fbadge%3Ftype%3Dswift-versions)](https://swiftpackageindex.com/moyerr/RichStringKit)
+[![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fmoyerr%2FRichStringKit%2Fbadge%3Ftype%3Dplatforms)](https://swiftpackageindex.com/moyerr/RichStringKit)\
 ![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/moyerr/RichStringKit/swift.yml?branch=main&label=Build&logo=github)
 ![Updated](https://img.shields.io/github/last-commit/moyerr/RichStringKit/main?color=1f6feb&label=Updated)
 
