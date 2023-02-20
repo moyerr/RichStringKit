@@ -130,7 +130,7 @@ var richText: some RichString {
 }
 ```
 
-For more general information about Swift's result builder types, see [the Result Builder section of the Language Guide](https://docs.swift.org/swift-book/LanguageGuide/AdvancedOperators.html#ID630).
+For more general information about Swift's result builder types, see [the Result Builder section of The Swift Programming Language](https://docs.swift.org/swift-book/documentation/the-swift-programming-language/advancedoperators#Result-Builders).
 
 ### Convenience Initializers
 
