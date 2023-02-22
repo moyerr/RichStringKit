@@ -26,6 +26,7 @@ final class RichStringBuilderTests: XCTestCase {
         XCTAssertTrue(actualType == expectedType)
     }
 
+    @available(watchOS, unavailable)
     func testAttachment() {
         let content = Fixture {
             Attachment(.testImage)

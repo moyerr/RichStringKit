@@ -34,6 +34,7 @@ final class NSAttributedStringRendererTests: XCTestCase {
         XCTAssertEqual(actual, expected)
     }
 
+    #if !os(watchOS)
     func testAttachment() throws {
         let richString = Attachment(.testImage)
 
@@ -63,6 +64,7 @@ final class NSAttributedStringRendererTests: XCTestCase {
         // We have to test the images because two NSTextAttachment instances are never equal
         XCTAssertIdentical(actualImage, expectedImage)
     }
+    #endif
 
     func testConcatenate() {
         let richString = Concatenate("Hello ", EmptyString(), "World", "!!!", EmptyString())

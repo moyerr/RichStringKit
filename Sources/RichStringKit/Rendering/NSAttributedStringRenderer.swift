@@ -55,8 +55,10 @@ extension RichStringOutput.Modifier {
             let attachment = NSTextAttachment()
             attachment.attachmentCell = cell
             return [.attachment: attachment]
-            #else
+            #elseif !os(watchOS)
             return [.attachment: NSTextAttachment(image: image)]
+            #else
+            return [:]
             #endif
         case .backgroundColor(let color):
             return [.backgroundColor: color]

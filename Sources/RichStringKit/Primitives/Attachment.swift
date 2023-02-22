@@ -6,6 +6,7 @@ import UIKit
 typealias Image = UIImage
 #endif
 
+@available(watchOS, unavailable)
 public struct Attachment: RichString {
     public typealias Body = Never
     public var body: Never { bodyAccessDisallowed() }
