@@ -6,6 +6,7 @@ import AppKit
 import UIKit
 #endif
 
+@available(watchOS, unavailable)
 extension NSTextAttachment {
     static func attachment(using image: Image) -> NSTextAttachment {
         #if os(macOS)

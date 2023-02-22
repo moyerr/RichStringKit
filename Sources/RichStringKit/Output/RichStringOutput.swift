@@ -12,7 +12,10 @@ public struct RichStringOutput: Equatable {
         case strikethroughStyle(LineStyle)
         case underlineColor(Color)
         case underlineStyle(LineStyle)
+
+        @available(watchOS, unavailable)
         case attachment(Image)
+
         indirect case combined(Modifier, Modifier)
     }
 

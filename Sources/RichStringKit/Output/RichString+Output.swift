@@ -26,6 +26,7 @@ extension String {
 
 // MARK: Attachment
 
+@available(watchOS, unavailable)
 extension Attachment {
     public func _makeOutput() -> RichStringOutput {
         .init(.modified(.attachment, .attachment(image)))
